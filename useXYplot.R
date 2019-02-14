@@ -11,7 +11,8 @@ my.padding <- list(top.padding = 1, main.key.padding = 0, key.axis.padding = 0,
                    left.padding = 1, key.sub.padding = 0, bottom.padding = 1,
                    axis.right = 0, key.right = 0)
 
-Fig4 <- xyplot(reduction_outlet ~ distance|BMP*Condition, data=mat, pch=16, scales = list(y = list                  (relation = "free", draw=F), x = list(draw=F)), xlab='Distance (m)', ylab='Outlet Reduction',
+Fig4 <- xyplot(reduction_outlet ~ distance|BMP*Condition, data=mat, pch=16, 
+               scales = list(y = list(relation = "free", draw=F), x = list(draw=F)), xlab='Distance (m)', ylab='Outlet Reduction',
                par.settings = list(layout.heights = my.padding,
                                    layout.widths = my.padding),
                panel=function(x,y){
