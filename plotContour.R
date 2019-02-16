@@ -143,7 +143,7 @@ for(s in 1:nsite){
   par(mar=c(1.5,1.5,.5,.5)+.5,mgp=c(1,.3,0), tck=-0.01, cex.axis=1, cex.lab=1, cex.main=1.1)
   image(x=x1s, y=x2s, z=matrix(yhat[,s],len), col=cols, breaks=cuts,main=nams[s], xlab='x1', ylab='x2')   
   # or like terrain.colors(50)
-  contour(x=x2s, y=x1s, z=matrix(yhat[,s],len), add=T,levels=cuts,labcex =.7, main='',
+  contour(x=x1s, y=x2s, z=matrix(yhat[,s],len), add=T,levels=cuts,labcex =.7, main='',
           labels=round(exp(cuts),3),method='flattest',col='blue')
   points(mat$x1, mat$x2,pch=16,cex=.9)
   
