@@ -1,0 +1,89 @@
+---
+title: "source code"
+# author: "Zhen Zhang"
+date: "October 20, 2017"
+output:
+  html_document: 
+    highlight: kate
+    theme: readable
+    toc: yes
+    number_sections: false
+---
+
+<style type="text/css">
+code.r{
+  font-size: 15px;
+}
+</style>
+
+
+### Curve fitting
+```{r, eval=FALSE,tidy=TRUE}
+library(drc)
+# main function for curve fitting
+fitCurves <- function(dat, indg, indx, model='LL2.3', ICmax=200, plotFigure=TRUE, inDataRange=FALSE, returnFUll=FALSE, logy=FALSE, lower0=FALSE, yrange=NULL){
+  logOrNot <- function(x, logIt=logy){
+    if(logIt) return(log10(x)) else return(x)
+  }
+  if(model=='optimal'){  # this is now depreciated as exhaustive search can take long time
+    if(!lower0) model <- c('LL2.3b', 'LL2.3h', "LL.4","LL2.4","LL.3", "LL2.3","W1.4","W2.4", "MM.2", "MM.3", "AR.2", "AR.3","EXD.2", "EXD.3", "BC.4")
+    if(lower0) model <- c('LL2.3b', 'LL.3','LL2.3','W1.3','W2.3','EXD.2','MM.2','AR.2','BC.4') #these models have lower limit at 0
+  }
+  model0 <- 'auto'
+  if(model=='auto'){ # we will sequentially explore some selected models
+    if(!lower0)  model <- c('LL2.4', 'LL2.3','EXD.3','AR.3')
+    if(lower0)  model <- c('LL2.3','EXD.2','AR.2')
+  }else model0 <- 'other'
+  nMod <- length(modNames0 <- model)   
+  
+  nams <- names(dat)
+  nc <- length(cnam <- unique(cs <- dat[,indg]))
+  xs <- dat[,indx]
+  nx <- length(ux <- unique(xs))
+  dat <- dat[, -c(indx, indg), drop=FALSE]
+  np <- length(pnam <- names(dat))
+  N <- nc*np
+```
+<a href="#top">Back to top</a>
+
+
+### Main function
+
+```{r, eval=FALSE,tidy=TRUE}
+# main function for fitting the dose-response curves
+useData <- reactive({
+  input$runButton
+  isolate({
+    if(!is.null(myData()$dat)){
+      
+      nams <- names(dat <- myData()$dat)   
+      if(input$dataFormat=="LIMS") indg <- which(nams=="Compound") else indg <- which(nams==input$g)
+      indx <- which(nams==input$x)
+      
+      out <- fitCurves(dat, indg=indg, indx=indx, model=input$m, ICmax=input$ICmax, plotFigure=FALSE, inDataRange=input$inRange, returnFUll=TRUE, logy=input$l, lower0=input$b0) 
+      a <- myData()$ctrlData
+      tabs4figure <- tabs <- out$tabs
+    })
+  })
+```
+<a href="#top">Back to top</a>
+
+
+### Util function
+```{r, eval=FALSE,tidy=TRUE}
+library(drc)
+
+# obtain IC50
+myIC50 <- function(m, model){
+  inds <- which(substr(names(coef(m)),1,1)=='e')
+  x <- c( coef(m)[inds], confint(m)[inds,])
+  if(model %in% c('LL2.3b', 'LL2.3h')) return(10^x) else{
+    if(model %in% c('LL2.3', 'LL2.4')){ 
+      return(exp(x))
+    }else{
+      return( ED(m, 50, interval='delta', display=FALSE)[-2] )
+    }
+  }
+}
+```
+<a href="#top">Back to top</a>
