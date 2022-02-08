@@ -87,3 +87,12 @@ myIC50 <- function(m, model){
 }
 ```
 <a href="#top">Back to top</a>
+
+
+
+        tabPanel("Codes",
+                 div(style="display: inline-block;vertical-align:top; width: 1000px;",
+                     includeHTML("codes.html")),
+                 br()
+                 #includeMarkdown("codes.Rmd")
+        ),
